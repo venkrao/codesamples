@@ -1,0 +1,18 @@
+---
+- hosts: all
+  remote_user: root
+  become: yes
+  become_method: sudo
+  tasks:
+  - name: Install list of packages
+    yum: name={{ item }} state=present
+    with_items:
+       - net-tools
+       - php.x86_64
+       - cmake.x86_64
+       - gcc
+       - gcc-c++
+       - wget
+       - libcurl-devel.x86_64
+       - libmicrohttpd-devel.x86_64
+
