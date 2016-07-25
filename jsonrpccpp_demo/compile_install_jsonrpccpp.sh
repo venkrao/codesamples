@@ -22,7 +22,7 @@
 	echo "INSTALLING dependency argtables2-13.."
 	output=argtable.tar.gz
 
-	#wget -q https://sourceforge.net/projects/argtable/files/argtable/argtable-2.13/argtable2-13.tar.gz/download -O $output
+	wget -q https://sourceforge.net/projects/argtable/files/argtable/argtable-2.13/argtable2-13.tar.gz/download -O $output
 	tar xf $output
 	cd argtable2-13 && ./configure && make && make install
 	rc=$?
@@ -48,4 +48,5 @@
 		echo "FAILED to install json-rpc-cpp. This is unexpected. Contact the owner of the Vagrant file fo help."
 		exit $rc
 	fi
+        ldconfig /usr/local/lib
 	echo "INSTALLING dependency jsoncpp.. Done"

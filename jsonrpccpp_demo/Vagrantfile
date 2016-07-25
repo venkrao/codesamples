@@ -66,10 +66,13 @@ Vagrant.configure("2") do |config|
   # documentation for more information about their specific syntax and use.
 
   config.vm.provision "ansible" do |ansible|
-    ansible.playbook = "httpd.yml"
     ansible.playbook = "misc_packages.yml"
+  end
+  config.vm.provision "ansible" do |ansible|
+    ansible.playbook = "httpd.yml"
   end
  
   config.vm.provision "shell", path: "compile_install_jsonrpccpp.sh"
+  config.vm.provision "file", source: "jsonrpccpp.php", destination: "/var/www/html/jsonrpccpp.php"
      
 end

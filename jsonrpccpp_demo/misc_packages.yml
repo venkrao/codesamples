@@ -7,6 +7,7 @@
   - name: Install list of packages
     yum: name={{ item }} state=present
     with_items:
+       - git
        - net-tools
        - php.x86_64
        - cmake.x86_64

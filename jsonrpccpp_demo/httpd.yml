@@ -5,12 +5,13 @@
   become: yes
   become_method: sudo
   tasks:
-  - name: ensure apache is at the latest version
+  - name: --Install Apache httpd--
     yum: name=httpd state=latest
   - name: ensure apache is running (and enable it at boot)
-    service: name=httpd state=started enabled=yes
+    service: name=httpd state=restarted enabled=yes
   - name: ensure ownership on /usr/share/httpd /var/www/html is set to vagrant
-    file: path={{ item.path }}  owner=vagrant group=vagrant mode=755 recurse=yes
+    file: path={{ item.path }}  owner=vagrant group=vagrant mode=0775 recurse=yes
     with_items:
        - { path: "/usr/share/httpd" }
        - { path: "/var/www/html" }
+
