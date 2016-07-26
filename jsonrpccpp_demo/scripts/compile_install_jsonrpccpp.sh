@@ -1,5 +1,5 @@
 #!/bin/sh
-
+[[ -f /usr/local/bin/jsonrpcstub ]] && exit 0
 	# 
 	cd /var/tmp
 

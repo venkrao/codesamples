@@ -22,6 +22,7 @@ if( count($_GET) == 0 ) {
    </center>
 
    <form id="app_form" style="margin-left:5%;">
+     <div>Serving from host: <?php echo gethostname();?></div>
      <div><span>json spec file:</span><textarea name="json_spec" rows="15" columns="45" required>
         [
     {

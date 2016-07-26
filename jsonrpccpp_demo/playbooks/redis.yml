@@ -1,0 +1,28 @@
+---
+- hosts: all
+  remote_user: root
+  become: yes
+  become_method: sudo
+  tasks:
+  - name: Add repository
+    yum_repository:
+      name: epel
+      description: EPEL YUM repo for Redis
+      baseurl: http://dl.fedoraproject.org/pub/epel/7/x86_64/
+      gpgcheck: no
+
+  - name: Install pip
+    yum: name=python-pip state=latest
+
+  - name: Install python devel
+    yum: name=python-devel state=latest
+
+  - name: Install redis python module
+    pip: name=python-redis state=latest
+
+  - name: Install redis
+    yum: name=redis state=latest
+
+  - name: ensure redis is running (and enable it at boot)
+    service: name=redis state=restarted enabled=yes
+
