@@ -1,5 +1,5 @@
-roman = {1000: "M", 500: "D", 100: "C", 50: "L", 10: "X", 5: "V", 1: "I"}
-roman_ints_set = (1000, 500, 100, 50, 10, 5, 1)
+roman = {1000: "M", 900: "CM", 500: "D", 400: "CD", 100: "C", 90: "XC", 50: "L", 40:"XL", 10: "X", 9: "IX", 5: "V", 4: "IV", 1: "I"}
+roman_ints_set = (1000, 900, 500, 400, 100, 90, 50, 40, 10, 9, 5, 4, 1)
 
 def print_roman(x):
    for ir in roman_ints_set:
@@ -11,7 +11,7 @@ def print_roman(x):
        if remainder == 0:
           return "%s" %roman[ir]*howmany
 
-       elif remainder < 5:
+       elif remainder < 4:
           return "%s%s" %(roman[ir]*howmany, roman[1]*remainder)
        else:
           return "%s%s" %(roman[ir]*howmany, print_roman(remainder))
