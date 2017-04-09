@@ -13,11 +13,11 @@ def get_prime(n):
 ugly_numbers = list()
 
 start = 1
-while len(ugly_numbers) < 1501:
+while len(ugly_numbers) < 1500:
    ugly = get_prime(start)
    if ugly:
       ugly_numbers.append(ugly)
    start += 1 
 
 
-print "1500th ugly prime: %d" %ugly_numbers[1500]
+print "1500th ugly prime: %d" %ugly_numbers[1499]
