@@ -1,0 +1,109 @@
+import sys
+import os
+import traceback
+
+from jira import JIRA
+from jira import exceptions
+
+class JiraAuth:
+    def __init__(self, jira_host=None):
+        self.jira_options = {
+                "server": "https://%s" %jira_host,
+                "verify": False
+        }
+
+    def login_netrc(self):
+        self.jira = JIRA(self.jira_options)
+        return self.jira
+
+    def login_basic(self, username=None, password=None):
+        # We need credentials.
+        self.jira = JIRA(self.jira_options, basic_auth=(username, password))
+        return self.jira
+
+    @staticmethod
+    def netrc_available(hostname=None, username=None):
+        if os.path.isfile(os.environ['HOME'] + "/.netrc"):
+            with open(os.environ['HOME'] + "/.netrc") as netrc:
+                for line in netrc:
+                    if not line.startswith("#") and hostname in line and username in line:
+                        return True
+        return False
+
+class JiraSearch:
+    def __init__(self, jira=None):
+        self.jira=jira
+
+    def search(self, jql):
+        search_results = None
+        try:
+            search_results = self.jira.search_issues(jql)
+        except exceptions.JIRAError as e:
+            print "--------------"
+            print "Search resulted in JiraError. Response was: %s" %e.text
+            print "--------------"
+
+        return search_results
+
+class JiraField:
+    def __init__(self, jira=None, issue=None):
+        self.jira = jira
+        self.issue = issue
+
+    def get_field(self, field=None):
+        field_value = None
+        try:
+            field_value = getattr(self.issue.fields, field)
+            if field_value == None:
+                field_value = ""
+        except exceptions.JIRAError as e:
+            print "Failed to read field %s: %s" %(field, e.text)
+
+        return field_value
+
+    def set_field(self, field_name=None, field_value=None, overwrite=False):
+        if overwrite:
+           self.issue.update(fields={field_name : field_value})
+        else:
+            field_value_existing = self.get_field(field=field_name)
+            if field_value_existing == None:
+                print "Refusing to update %s. Looks like there was an exception!" %field_name
+                return False
+
+            self.issue.update(fields={field_name: field_value_existing + " " + field_value})
+        return True
+
+
+class JiraTransition:
+    def __init__(self, jira=None, jira_issue=None):
+        self.jira = jira
+        self.jira_issue = jira_issue
+
+    def transition_no_overwrite(self, transition_id=None, field_name=None, field_value = None):
+        field_value_existing = JiraField(jira=self.jira, issue=self.jira_issue).get_field(field=field_name)
+        if field_value_existing == "":
+            print "Setting field: %s to %s" %(field_name, field_value)
+            try:
+                self.jira.transition_issue(self.jira_issue, transition_id, fields={field_name: field_value})
+                print "Succeeded."
+            except exceptions.JIRAError as e:
+                print "Failed with exception: %s" % (e.text)
+                traceback.print_exc()
+
+        else:
+            print "Field %s already has value %s. Refusing to update it!" %(field_name, field_value_existing)
+            return False
+
+        return True
+
+    def transition_overwrite(self, transition_id=None, field_name=None, field_value = None):
+        field_value_existing = JiraField(jira=self.jira, issue=self.jira_issue).get_field(field=field_name)
+        print "Overwrite field %s. Existing value='%s' to New value=%s" %(field_name, field_value_existing, field_value)
+        try:
+            self.jira.transition_issue(self.jira_issue, transition_id, fields={field_name: field_value})
+            print "Succeeded."
+        except exceptions.JIRAError as e:
+            print "Failed with exception: %s" %(e.text)
+            return False
+
+        return True
